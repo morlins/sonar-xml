@@ -74,16 +74,33 @@ public class XPathCheck extends AbstractXmlCheck {
     Document document = getWebSourceCode().getDocument(expression.contains(":"));
 
     try {
-      NodeList nodes = (NodeList) getXPathExpressionForDocument(document).evaluate(document, XPathConstants.NODESET);
-      for (int i = 0; i < nodes.getLength(); i++) {
+        try{
+            NodeList nodes = (NodeList) getXPathExpressionForDocument(document).evaluate(document, XPathConstants.NODESET);
 
-        int lineNumber = getWebSourceCode().getLineForNode(nodes.item(i));
-        if (message == null) {
-          createViolation(lineNumber);
-        } else {
-          createViolation(lineNumber, message);
+            for (int i = 0; i < nodes.getLength(); i++) {
+
+                int lineNumber = getWebSourceCode().getLineForNode(nodes.item(i));
+                if (message == null) {
+                    createViolation(lineNumber);
+                } else {
+                    createViolation(lineNumber, message);
+                }
+            }
+
+        }  catch (XPathExpressionException e){
+            //Se nn restituisce una lista di nodi controllo se risultato xpath torna un booleano
+            String res =  getXPathExpressionForDocument(document).evaluate(document);
+            Boolean violation= Boolean.parseBoolean(res);
+            if(violation){
+                //TODO gestire posizionamento errore
+                if (message == null) {
+                    createViolation(1);
+                } else {
+                    createViolation(1, message);
+                }
+            }
         }
-      }
+
     } catch (XPathExpressionException e) {
       throw new SonarException(e);
     }

@@ -79,4 +79,24 @@ public class XPathCheckTest extends AbstractCheckTester {
     assertEquals("Incorrect number of violations", 0, sourceCode.getXmlIssues().size());
   }
 
+    // test Boolean      no violation
+    @Test
+    public void xpathRuleBooleanXpathResultFalse() throws FileNotFoundException {
+        String fileName = "src/test/resources/checks/generic/sonarsource.html";
+        FileReader reader = new FileReader(fileName);
+        XmlSourceCode sourceCode = parseAndCheck(reader, new java.io.File(fileName), null, XPathCheck.class, "expression", "not(//link[@rel])");
+
+        assertEquals("Incorrect number of violations", 0, sourceCode.getXmlIssues().size());
+    }
+          //TODO
+    // test Boolean       violation
+    @Test
+    public void xpathRuleBooleanXpathResultTrue() throws FileNotFoundException {
+        String fileName = "src/test/resources/checks/generic/catalog.xsd";
+        FileReader reader = new FileReader(fileName);
+        XmlSourceCode sourceCode = parseAndCheck(reader, new java.io.File(fileName), null, XPathCheck.class, "expression", "boolean(//*[local-name()='complexType'])");
+
+        assertEquals("Incorrect number of violations", 1, sourceCode.getXmlIssues().size());
+    }
+
 }
